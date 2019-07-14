@@ -53,7 +53,9 @@ app.post('/login', (req, res) => {
         res.json({
             ok: true,
             usuario: usuarioDB,
-            token
+            token,
+            id: usuarioDB._id
+            // menu: obtenerMenu(usuarioDB.role)
         });
 
 
@@ -155,6 +157,8 @@ app.post('/google', async(req, res) => {
                     ok: true,
                     usuario: usuarioDB,
                     token,
+                    id: usuarioDB._id,
+                    menu: obtenerMenu(usuarioDB.role)
                 });
 
 
@@ -167,6 +171,39 @@ app.post('/google', async(req, res) => {
 
 
 });
+
+
+function obtenerMenu(ROLE) {
+
+    var menu = [{
+            titulo: 'Principal',
+            icono: 'mdi mdi-gauge',
+            submenu: [
+                { titulo: 'Categorias', url: '/categorias' },
+                { titulo: 'Movimientos', url: '/movimientos' }
+            ]
+        },
+        {
+            titulo: 'Mantenimientos',
+            icono: 'mdi mdi-folder-lock-open',
+            submenu: [
+                // { titulo: 'Usuarios', url: '/usuarios' },
+                { titulo: 'Productos', url: '/productos' },
+                { titulo: 'Pedidos', url: '/pedidos' }
+            ]
+        }
+    ];
+
+    console.log('ROLE', ROLE);
+
+    if (ROLE === 'ADMIN_ROLE') {
+        menu[0].submenu.unshift({ titulo: 'Usuarios', url: '/usuarios' });
+    }
+
+
+    return menu;
+
+}
 
 
 

@@ -4,13 +4,15 @@ const app = express();
 
 const Usuario = require('../models/usuario');
 const Producto = require('../models/producto');
+const Categoria = require('../models/categoria');
 
 const fs = require('fs');
 const path = require('path');
 
 
 // default options
-app.use(fileUpload());
+// app.use(fileUpload());
+app.use( fileUpload({ useTempFiles: true }) );
 
 
 app.put('/upload/:tipo/:id', function(req, res) {
@@ -29,7 +31,7 @@ app.put('/upload/:tipo/:id', function(req, res) {
     }
 
     // Valida tipo
-    let tiposValidos = ['productos', 'usuarios'];
+    let tiposValidos = ['productos', 'usuarios', 'categorias'];
     if (tiposValidos.indexOf(tipo) < 0) {
         return res.status(400).json({
             ok: false,
@@ -72,8 +74,10 @@ app.put('/upload/:tipo/:id', function(req, res) {
         // Aqui, imagen cargada
         if (tipo === 'usuarios') {
             imagenUsuario(id, res, nombreArchivo);
-        } else {
+        } else if (tipo === 'productos') {
             imagenProducto(id, res, nombreArchivo);
+        } else {
+            imagenCategoria(id, res, nombreArchivo);
         }
 
     });
@@ -147,7 +151,7 @@ function imagenProducto(id, res, nombreArchivo) {
             return res.status(400).json({
                 ok: false,
                 err: {
-                    message: 'Usuaro no existe'
+                    message: 'Producto no existe'
                 }
             });
         }
@@ -172,7 +176,50 @@ function imagenProducto(id, res, nombreArchivo) {
 
 }
 
+function imagenCategoria(id, res, nombreArchivo) {
 
+    Categoria.findById(id, (err, categoriaDB) => {
+
+        if (err) {
+            borraArchivo(nombreArchivo, 'categorias');
+
+            return res.status(500).json({
+                ok: false,
+                err
+            });
+        }
+
+        if (!categoriaDB) {
+
+            borraArchivo(nombreArchivo, 'categorias');
+
+            return res.status(400).json({
+                ok: false,
+                err: {
+                    message: 'Categoria no existe'
+                }
+            });
+        }
+
+        borraArchivo(categoriaDB.img, 'categorias')
+
+        categoriaDB.img = nombreArchivo;
+
+        categoriaDB.save((err, categoriaGuardado) => {
+
+            res.json({
+                ok: true,
+                categoria: categoriaGuardado,
+                img: nombreArchivo
+            });
+
+        });
+
+
+    });
+
+
+}
 
 function borraArchivo(nombreImagen, tipo) {
 

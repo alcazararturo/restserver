@@ -8,7 +8,8 @@ app.use(require('./categoria'));
 app.use(require('./producto'));
 app.use(require('./upload'));
 app.use(require('./imagenes'));
-app.use(require('./producto'));
+app.use(require('./pedido'));
 app.use(require('./detalle'));
+
 
 module.exports = app;
