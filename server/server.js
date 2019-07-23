@@ -29,12 +29,19 @@ app.use(express.static(path.resolve(__dirname, '../public')));
 // Configuración global de rutas
 app.use(require('./routes/index'));
 
+/*
+
+const client = new MongoClient(uri, { useNewUrlParser: true });
+client.connect(err => {
+  const collection = client.db("test").collection("devices");
+  // perform actions on the collection object
+  client.close();
+});
+
+*/
 
 
-mongoose.connect(process.env.URLDB, 
-        { userNewUrlParser: true, 
-          useCreateIndex: true,
-          useFindAndModify: false }, (err, res) => {
+mongoose.connect(process.env.URLDB, (err, res) => {
 				
     if (err) throw err;
 

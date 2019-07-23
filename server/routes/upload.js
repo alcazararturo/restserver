@@ -1,5 +1,8 @@
 const express = require('express');
 const fileUpload = require('express-fileupload');
+const cloudinary = require('cloudinary').v2;
+const cloudinaryStorage = require('multer-storage-cloudinary');
+const multer = require('multer');
 const app = express();
 
 const Usuario = require('../models/usuario');
@@ -9,6 +12,11 @@ const Categoria = require('../models/categoria');
 const fs = require('fs');
 const path = require('path');
 
+cloudinary.config({
+    cloud_name: 'alcarod',
+    api_key: '828937452369795', 
+    api_secret: 'yhYFEwMSFB6jPJMYqXM1MlOe7D8' 
+});
 
 // default options
 // app.use(fileUpload());
@@ -17,8 +25,8 @@ app.use( fileUpload({ useTempFiles: true }) );
 
 app.put('/upload/:tipo/:id', function(req, res) {
 
-    let tipo = req.params.tipo;
-    let id = req.params.id;
+    const tipo = req.params.tipo;
+    const id = req.params.id;
 
     if (!req.files) {
         return res.status(400)
@@ -31,7 +39,7 @@ app.put('/upload/:tipo/:id', function(req, res) {
     }
 
     // Valida tipo
-    let tiposValidos = ['productos', 'usuarios', 'categorias'];
+    const tiposValidos = ['productos', 'usuarios', 'categorias'];
     if (tiposValidos.indexOf(tipo) < 0) {
         return res.status(400).json({
             ok: false,
@@ -41,12 +49,12 @@ app.put('/upload/:tipo/:id', function(req, res) {
         })
     }
 
-    let archivo = req.files.archivo;
-    let nombreCortado = archivo.name.split('.');
-    let extension = nombreCortado[nombreCortado.length - 1];
+    const archivo = req.files.archivo;
+    const nombreCortado = archivo.name.split('.');
+    const extension = nombreCortado[nombreCortado.length - 1];
 
     // Extensiones permitidas
-    let extensionesValidas = ['png', 'jpg', 'gif', 'jpeg'];
+    const extensionesValidas = ['png', 'jpg', 'gif', 'jpeg'];
 
     if (extensionesValidas.indexOf(extension) < 0) {
         return res.status(400).json({
@@ -55,13 +63,12 @@ app.put('/upload/:tipo/:id', function(req, res) {
                 message: 'Las extensiones permitidas son ' + extensionesValidas.join(', '),
                 ext: extension
             }
-        })
+        });
     }
 
     // Cambiar nombre al archivo
     // 183912kuasidauso-123.jpg
-    let nombreArchivo = `${ id }-${ new Date().getMilliseconds()  }.${ extension }`;
-
+    const nombreArchivo = `${ id }-${ new Date().getMilliseconds()  }.${ extension }`;
 
     archivo.mv(`uploads/${ tipo }/${ nombreArchivo }`, (err) => {
 
@@ -84,11 +91,83 @@ app.put('/upload/:tipo/:id', function(req, res) {
 
 });
 
+app.post('/upload/:tipo/:id', function(req, res) {
+
+    
+    const tipo = req.params.tipo;
+    const id = req.params.id;
+
+    if (!req.files) {
+        return res.status(400)
+            .json({
+                ok: false,
+                err: {
+                    message: 'No se ha seleccionado ningún archivo'
+                }
+            });
+    }
+
+    // Valida tipo
+     const tiposValidos = ['productos', 'usuarios', 'categorias'];
+     if (tiposValidos.indexOf(tipo) < 0) {
+         return res.status(400).json({
+             ok: false,
+             err: {
+                 message: 'Los tipos permitidas son ' + tiposValidos.join(', ')
+             }
+         });
+     }
+
+    const archivo = req.files.archivo;
+    const nombreCortado = archivo.name.split('.');
+    const extension = nombreCortado[nombreCortado.length - 1];
+
+    // Extensiones permitidas
+    const extensionesValidas = ['png', 'jpg', 'gif', 'jpeg'];
+
+     if (extensionesValidas.indexOf(extension) < 0) {
+         return res.status(400).json({
+             ok: false,
+             err: {
+                 message: 'Las extensiones permitidas son ' + extensionesValidas.join(', '),
+                 ext: extension
+             }
+         });
+     }
+
+    // Cambiar nombre al archivo
+    // 183912kuasidauso-123.jpg
+    const  nombreArchivo = `${ id }-${ new Date().getMilliseconds()  }.${ extension }`;
+
+    cloudinary.uploader.upload(archivo.tempFilePath, { 
+        folder: tipo, use_filename: true }, function(err, result) {
+
+            if (err) {
+                console.log(err);
+                return;
+            } 
+            
+            // console.log(result.secure_url);
+            if (tipo === 'usuarios') {
+                imagenUsuario(id, res, result.secure_url);
+            } else if (tipo === 'productos') {
+                imagenProducto(id, res, result.secure_url);
+            } else {
+                imagenCategoria(id, res, result.secure_url);
+            }
+
+            
+    });
+
+
+});
+
 function imagenUsuario(id, res, nombreArchivo) {
 
     Usuario.findById(id, (err, usuarioDB) => {
 
         if (err) {
+
             borraArchivo(nombreArchivo, 'usuarios');
 
             return res.status(500).json({
@@ -109,7 +188,7 @@ function imagenUsuario(id, res, nombreArchivo) {
             });
         }
 
-        borraArchivo(usuarioDB.img, 'usuarios')
+        borraArchivo(usuarioDB.img, 'usuarios');
 
         usuarioDB.img = nombreArchivo;
 
@@ -136,6 +215,7 @@ function imagenProducto(id, res, nombreArchivo) {
     Producto.findById(id, (err, productoDB) => {
 
         if (err) {
+
             borraArchivo(nombreArchivo, 'productos');
 
             return res.status(500).json({
@@ -162,7 +242,7 @@ function imagenProducto(id, res, nombreArchivo) {
 
         productoDB.save((err, productoGuardado) => {
 
-            res.json({
+           res.json({
                 ok: true,
                 producto: productoGuardado,
                 img: nombreArchivo
@@ -201,7 +281,7 @@ function imagenCategoria(id, res, nombreArchivo) {
             });
         }
 
-        borraArchivo(categoriaDB.img, 'categorias')
+        // borraArchivo(categoriaDB.img, 'categorias');
 
         categoriaDB.img = nombreArchivo;
 
@@ -230,5 +310,9 @@ function borraArchivo(nombreImagen, tipo) {
 
 
 }
+
+
+
+
 
 module.exports = app;

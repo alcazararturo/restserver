@@ -158,7 +158,7 @@ app.post('/google', async(req, res) => {
                     usuario: usuarioDB,
                     token,
                     id: usuarioDB._id,
-                    menu: obtenerMenu(usuarioDB.role)
+                    // menu: obtenerMenu(usuarioDB.role)
                 });
 
 
@@ -180,7 +180,9 @@ function obtenerMenu(ROLE) {
             icono: 'mdi mdi-gauge',
             submenu: [
                 { titulo: 'Categorias', url: '/categorias' },
-                { titulo: 'Movimientos', url: '/movimientos' }
+                { titulo: 'Movimientos', url: '/movimientos' },
+                { titulo: 'Productos', url: '/productos' },
+                { titulo: 'Pedidos', url: '/pedidos' }
             ]
         },
         {
