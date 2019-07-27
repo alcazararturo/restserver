@@ -113,16 +113,13 @@ app.post('/categoria', verificaToken, (req, res) => {
 // actualiza una categoria por id
 // ============================
 app.put('/categoria/:id', verificaToken, (req, res) => {
+    // grabar el usuario
+    // grabar una categoria del listado 
 
     let id = req.params.id;
     let body = req.body;
 
-    let descCategoria = {
-        descripcion: body.descripcion,
-        img: body.img
-    };
-    // 
-    Categoria.findOneAndUpdate(id, descCategoria, { new: true, runValidators: true }, (err, categoriaDB) => {
+    categoria.findById(id, (err, categoriaDB) => {
 
         if (err) {
             return res.status(500).json({
@@ -134,13 +131,29 @@ app.put('/categoria/:id', verificaToken, (req, res) => {
         if (!categoriaDB) {
             return res.status(400).json({
                 ok: false,
-                err
+                err: {
+                    message: 'El ID no existe'
+                }
             });
         }
 
-        res.json({
-            ok: true,
-            categoria: categoriaDB
+        categoriaDB.descripcion = body.descripcion;
+        categoriaDB.img         = body.img;
+
+        categoriaDB.save((err, categoriaGuardado) => {
+
+            if (err) {
+                return res.status(500).json({
+                    ok: false,
+                    err
+                });
+            }
+
+            res.json({
+                ok: true,
+                categoria: categoriaGuardado
+            });
+
         });
 
     });
