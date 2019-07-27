@@ -21,7 +21,7 @@ app.get('/pedido', verificaToken, (req, res) => {
 app.get('/pedido/:id', verificaToken, (req, res) => {
     // Categoria.findById(....);
     let id = req.params.id;
-    Pedido.findById(id, (err, pedidoDB) => {
+    Pedido.findOne({_id:id}, (err, pedidoDB) => {
         if (err) { return res.status(500).json({ ok: false, err }); }
         if (!pedidoDB) { return res.status(500).json({ ok: false, err: { message: 'El ID no es correcto' } }); }
         res.json({ ok: true, pedido: pedidoDB });
@@ -57,7 +57,7 @@ app.put('/pedido/:id', verificaToken, (req, res) => {
     let body = req.body;
     let usuario = req.usuario._id;
 
-    Pedido.findById(id, (err, pedidoDB) => {
+    Pedido.findOne({_id:id}, (err, pedidoDB) => {
 
         if (err) {
             return res.status(500).json({
@@ -104,7 +104,7 @@ app.put('/pedido/:id', verificaToken, (req, res) => {
 // ===========================
 app.delete('/pedido/:id', verificaToken, verificaAdmin_Role, (req, res) => {
     let id = req.params.id;
-    Pedido.findById(id, (err, pedidoDB) => {
+    Pedido.findOne({_id:id}, (err, pedidoDB) => {
         if (err) { return res.status(500).json({ ok: false, err }); }
         if (!pedidoDB) { return res.status(400).json({ ok: false, err: { message: 'ID no existe' } }); }
         pedidoDB.estado = false;

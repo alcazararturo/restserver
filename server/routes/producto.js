@@ -50,7 +50,7 @@ app.get('/productos/:id', (req, res) => {
     // paginado
     let id = req.params.id;
 
-    Producto.findById(id)
+    Producto.findOne({_id:id})
         .populate('usuario', 'nombre email')
         .populate('categoria', 'nombre')
         .exec((err, productoDB) => {
@@ -159,7 +159,7 @@ app.put('/productos/:id', verificaToken, (req, res) => {
     let id = req.params.id;
     let body = req.body;
 
-    Producto.findById(id, (err, productoDB) => {
+    Producto.findOne({_id:id}, (err, productoDB) => {
 
         if (err) {
             return res.status(500).json({
@@ -211,7 +211,7 @@ app.delete('/productos/:id', verificaToken, (req, res) => {
 
     let id = req.params.id;
 
-    Producto.findById(id, (err, productoDB) => {
+    Producto.findOne({_id:id}, (err, productoDB) => {
 
         if (err) {
             return res.status(500).json({
@@ -248,7 +248,7 @@ app.delete('/productos/:id', verificaToken, (req, res) => {
 
         })
 
-    })
+    });
 
 
 });

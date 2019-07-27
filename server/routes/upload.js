@@ -164,7 +164,7 @@ app.post('/upload/:tipo/:id', function(req, res) {
 
 function imagenUsuario(id, res, nombreArchivo) {
 
-    Usuario.findById(id, (err, usuarioDB) => {
+    Usuario.findOne({_id:id}, (err, usuarioDB) => {
 
         if (err) {
 
@@ -212,7 +212,7 @@ function imagenUsuario(id, res, nombreArchivo) {
 
 function imagenProducto(id, res, nombreArchivo) {
 
-    Producto.findById(id, (err, productoDB) => {
+    Producto.findOne({_id:id}, (err, productoDB) => {
 
         if (err) {
 
@@ -258,7 +258,7 @@ function imagenProducto(id, res, nombreArchivo) {
 
 function imagenCategoria(id, res, nombreArchivo) {
 
-    Categoria.findById(id, (err, categoriaDB) => {
+    Categoria.findOne({_id:id}, (err, categoriaDB) => {
 
         if (err) {
             borraArchivo(nombreArchivo, 'categorias');

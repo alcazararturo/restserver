@@ -39,7 +39,7 @@ app.get('/categoria/:id', verificaToken, (req, res) => {
 
     let id = req.params.id;
 
-    Categoria.findById(id, (err, categoriaDB) => {
+    Categoria.findOne({_id:id}, (err, categoriaDB) => {
 
         if (err) {
             return res.status(500).json({
@@ -119,8 +119,8 @@ app.put('/categoria/:id', verificaToken, (req, res) => {
     let id = req.params.id;
     let body = req.body;
 
-    categoria.findById(id, (err, categoriaDB) => {
-
+    Categoria.findOne({_id:id}, (err, categoriaDB) => {
+        
         if (err) {
             return res.status(500).json({
                 ok: false,
@@ -158,7 +158,6 @@ app.put('/categoria/:id', verificaToken, (req, res) => {
 
     });
 
-
 });
 
 // ============================
@@ -169,7 +168,7 @@ app.delete('/categoria/:id', [verificaToken, verificaAdmin_Role], (req, res) => 
     // Categoria.findByIdAndRemove
     let id = req.params.id;
     // 
-    Categoria.findByIdAndRemove(id, (err, categoriaDB) => {
+    Categoria.remove({_id:id}, (err, categoriaDB) => {
 
         if (err) {
             return res.status(500).json({
@@ -186,11 +185,13 @@ app.delete('/categoria/:id', [verificaToken, verificaAdmin_Role], (req, res) => 
                 }
             });
         }
-
-        res.json({
-            ok: true,
-            message: 'Categoria Borrada'
+        
+        return res.json({
+                ok: true,
+                message: 'Categoria Borrada'
         });
+
+        
 
     });
 

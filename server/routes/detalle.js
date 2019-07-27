@@ -23,7 +23,7 @@ app.get('/detalle', verificaToken, (req, res) => {
 app.get('/detalle/:id', verificaToken, (req, res) => {
     // DetallePed.findById(....);
     let id = req.params.id;
-    Detalle.findById(id, (err, detalleDB) => {
+    Detalle.findOne({_id:id}, (err, detalleDB) => {
             if (err) { return res.status(500).json({ ok: false, err }); }
             if (!detalleDB) { return res.status(500).json({ ok: false, err: { message: 'El ID no es correcto' } }); }
             res.json({ ok: true, detalle: detalleDB });
@@ -62,7 +62,7 @@ app.put('/detalle/:id', verificaToken, (req, res) => {
     let body = req.body;
     let usuario = req.usuario._id;
 
-    Detalle.findById(id, (err, detalleDB) => {
+    Detalle.findOne({_id:id}, (err, detalleDB) => {
 
         if (err) {
             return res.status(500).json({
@@ -109,7 +109,7 @@ app.put('/detalle/:id', verificaToken, (req, res) => {
 // ===========================
 app.delete('/detalle/:id', verificaToken, verificaAdmin_Role, (req, res) => {
     let id = req.params.id;
-    Detalle.findById(id, (err, detalleDB) => {
+    Detalle.findOne({_id:id}, (err, detalleDB) => {
         if (err) { return res.status(500).json({ ok: false, err }); }
         if (!detalleDB) { return res.status(400).json({ ok: false, err: { message: 'ID no existe' } }); }
         detalleDB.estado = false;
