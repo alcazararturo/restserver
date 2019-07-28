@@ -140,7 +140,7 @@ app.post('/upload/:tipo/:id', function(req, res) {
     const  nombreArchivo = `${ id }-${ new Date().getMilliseconds()  }.${ extension }`;
 
     cloudinary.uploader.upload(archivo.tempFilePath, { 
-        folder: tipo, use_filename: true }, function(err, result) {
+        folder: tipo, use_filename: true, "width": 250, "height": 250, "crop": "fit", "effect": "saturation:-70" }, function(err, result) {
 
             if (err) {
                 console.log(err);
