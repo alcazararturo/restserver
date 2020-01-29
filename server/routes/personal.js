@@ -4,26 +4,26 @@ const { verificaToken } = require('../middlewares/autenticacion');
 
 
 let app = express();
-let Producto = require('../models/producto');
+let personal = require('../models/personal');
 
 
 // ===========================
-//  Obtener productos
+//  Obtener personal
 // ===========================
-app.get('/productos', verificaToken, (req, res) => {
-    // trae todos los productos
-    // populate: usuario categoria
+app.get('/personal', verificaToken, (req, res) => {
+    // trae todo personal
+    // populate: usuario produto
     // paginado
 
     let desde = req.query.desde || 0;
     desde = Number(desde);
 
-    Producto.find({ disponible: true })
+    personal.find({ disponible: true })
         .skip(desde)
         .limit(5)
         .populate('usuario', 'nombre email')
-        .populate('categoria', 'descripcion')
-        .exec((err, productos) => {
+        .populate('producto', 'nombre')
+        .exec((err, personal) => {
 
             if (err) {
                 return res.status(500).json({
@@ -34,7 +34,7 @@ app.get('/productos', verificaToken, (req, res) => {
 
             res.json({
                 ok: true,
-                productos
+                personal
             });
 
 
@@ -43,17 +43,17 @@ app.get('/productos', verificaToken, (req, res) => {
 });
 
 // ===========================
-//  Obtener un producto por ID
+//  Obtener un personal por ID
 // ===========================
-app.get('/productos/:id', (req, res) => {
-    // populate: usuario categoria
+app.get('/personal/:id', (req, res) => {
+    // populate: usuario producto
     // paginado
     let id = req.params.id;
 
-    Producto.findOne({_id:id})
+    personal.findOne({_id:id})
         .populate('usuario', 'nombre email')
-        .populate('categoria', 'nombre')
-        .exec((err, productoDB) => {
+        .populate('producto', 'nombre')
+        .exec((err, personalDB) => {
 
             if (err) {
                 return res.status(500).json({
@@ -62,7 +62,7 @@ app.get('/productos/:id', (req, res) => {
                 });
             }
 
-            if (!productoDB) {
+            if (!personalDB) {
                 return res.status(400).json({
                     ok: false,
                     err: {
@@ -73,7 +73,7 @@ app.get('/productos/:id', (req, res) => {
 
             res.json({
                 ok: true,
-                producto: productoDB
+                personal: personalDB
             });
 
         });
@@ -81,17 +81,17 @@ app.get('/productos/:id', (req, res) => {
 });
 
 // ===========================
-//  Buscar productos
+//  Buscar personal
 // ===========================
-app.get('/productos/buscar/:termino', verificaToken, (req, res) => {
+app.get('/personal/buscar/:termino', verificaToken, (req, res) => {
 
     let termino = req.params.termino;
 
     let regex = new RegExp(termino, 'i');
 
-    Producto.find({ nombre: regex })
-        .populate('categoria', 'nombre')
-        .exec((err, productos) => {
+    personal.find({ nombre: regex })
+        .populate('producto', 'nombre')
+        .exec((err, personal) => {
 
 
             if (err) {
@@ -103,7 +103,7 @@ app.get('/productos/buscar/:termino', verificaToken, (req, res) => {
 
             res.json({
                 ok: true,
-                productos
+                personal
             })
 
         })
@@ -114,25 +114,25 @@ app.get('/productos/buscar/:termino', verificaToken, (req, res) => {
 
 
 // ===========================
-//  Crear un nuevo producto
+//  Crear un nuevo personal
 // ===========================
-app.post('/productos', verificaToken, (req, res) => {
+app.post('/personal', verificaToken, (req, res) => {
     // grabar el usuario
-    // grabar una categoria del listado 
+    // grabar una producto del listado 
 
     let body = req.body;
 
-    let producto = new Producto({
+    let personal = new personal({
         usuario: req.usuario._id,
         nombre: body.nombre,
         precioUni: body.precioUni,
         descripcion: body.descripcion,
         genero: body.genero,
         disponible: body.disponible,
-        categoria: body.categoria
+        producto: body.producto
     });
 
-    producto.save((err, productoDB) => {
+    personal.save((err, personalDB) => {
 
         if (err) {
             return res.status(500).json({
@@ -143,7 +143,7 @@ app.post('/productos', verificaToken, (req, res) => {
 
         res.status(201).json({
             ok: true,
-            producto: productoDB
+            personal: personalDB
         });
 
     });
@@ -151,16 +151,16 @@ app.post('/productos', verificaToken, (req, res) => {
 });
 
 // ===========================
-//  Actualizar un producto
+//  Actualizar un personal
 // ===========================
-app.put('/productos/:id', verificaToken, (req, res) => {
+app.put('/personal/:id', verificaToken, (req, res) => {
     // grabar el usuario
-    // grabar una categoria del listado 
+    // grabar una producto del listado 
 
     let id = req.params.id;
     let body = req.body;
 
-    Producto.findOne({_id:id}, (err, productoDB) => {
+    personal.findOne({_id:id}, (err, personalDB) => {
 
         if (err) {
             return res.status(500).json({
@@ -169,7 +169,7 @@ app.put('/productos/:id', verificaToken, (req, res) => {
             });
         }
 
-        if (!productoDB) {
+        if (!personalDB) {
             return res.status(400).json({
                 ok: false,
                 err: {
@@ -178,14 +178,14 @@ app.put('/productos/:id', verificaToken, (req, res) => {
             });
         }
 
-        productoDB.nombre = body.nombre;
-        productoDB.precioUni = body.precioUni;
-        productoDB.categoria = body.categoria;
-        productoDB.genero = body.genero;
-        productoDB.disponible = body.disponible;
-        productoDB.descripcion = body.descripcion;
+        personalDB.nombre = body.nombre;
+        personalDB.precioUni = body.precioUni;
+        personalDB.producto = body.producto;
+        personalDB.genero = body.genero;
+        personalDB.disponible = body.disponible;
+        personalDB.descripcion = body.descripcion;
 
-        productoDB.save((err, productoGuardado) => {
+        personalDB.save((err, personalGuardado) => {
 
             if (err) {
                 return res.status(500).json({
@@ -196,7 +196,7 @@ app.put('/productos/:id', verificaToken, (req, res) => {
 
             res.json({
                 ok: true,
-                producto: productoGuardado
+                personal: personalGuardado
             });
 
         });
@@ -207,13 +207,13 @@ app.put('/productos/:id', verificaToken, (req, res) => {
 });
 
 // ===========================
-//  Borrar un producto
+//  Borrar un personal
 // ===========================
-app.delete('/productos/:id', verificaToken, (req, res) => {
+app.delete('/personal/:id', verificaToken, (req, res) => {
 
     let id = req.params.id;
 
-    Producto.findOne({_id:id}, (err, productoDB) => {
+    personal.findOne({_id:id}, (err, personalDB) => {
 
         if (err) {
             return res.status(500).json({
@@ -222,7 +222,7 @@ app.delete('/productos/:id', verificaToken, (req, res) => {
             });
         }
 
-        if (!productoDB) {
+        if (!personalDB) {
             return res.status(400).json({
                 ok: false,
                 err: {
@@ -231,9 +231,9 @@ app.delete('/productos/:id', verificaToken, (req, res) => {
             });
         }
 
-        productoDB.disponible = false;
+        personalDB.disponible = false;
 
-        productoDB.save((err, productoBorrado) => {
+        personalDB.save((err, personalBorrado) => {
 
             if (err) {
                 return res.status(500).json({
@@ -244,8 +244,8 @@ app.delete('/productos/:id', verificaToken, (req, res) => {
 
             res.json({
                 ok: true,
-                producto: productoBorrado,
-                mensaje: 'Producto borrado'
+                personal: personalBorrado,
+                mensaje: 'personal borrado'
             });
 
         })
