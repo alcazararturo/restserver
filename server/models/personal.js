@@ -6,7 +6,7 @@ var personalSchema = new Schema({
     email:  { type: String, required: [true, 'El correo es necesario'] },
     img: { type: String, required: false },
     disponible: { type: Boolean, required: true, default: true },
-    producto: { Array(type: Schema.Types.ObjectId), ref: 'Producto', required: true },
+    producto: [{ type: Schema.Types.ObjectId, ref: 'Producto' }],
     usuario: { type: Schema.Types.ObjectId, ref: 'Usuario' }
 });
 
