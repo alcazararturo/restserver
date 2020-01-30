@@ -129,7 +129,7 @@ app.post('/personal', verificaToken, (req, res) => {
         descripcion: body.descripcion,
         genero: body.genero,
         disponible: body.disponible,
-        producto: body.producto
+        producto: [ body.producto ]
     });
 
     personal.save((err, personalDB) => {
