@@ -33,9 +33,12 @@ let urlDB;
 if (process.env.NODE_ENV === 'dev') {
     // urlDB = 'mongodb+srv://m220student:FCbhWQrB78hcf8DS@mflix-bb7g0.mongodb.net/smeco?retryWrites=true&w=majority';
     //urlDB = `mongodb://gh_5304:gh_5304@localhost:27017/${ GITHUB_ISSUE }?authSource=admin`);
-    urlDB = 'mongodb://localhost:27017/smeco?authSource=admin'; // aqui podemos cambiar el nombre de la bd
+    //urlDB = 'mongodb://localhost:27017/smeco?authSource=admin';
+    // let uri = 'mongodb://localhost:27017/smeco?authSource=admin&retryWrites=true';
+    
+    urlDB = ( 'mongodb://localhost:27017/smeco' );
 } else {
-	urlDB = process.env.MONGO_URI;
+//	urlDB = process.env.MONGO_URI;
 }
 process.env.URLDB = urlDB;
 

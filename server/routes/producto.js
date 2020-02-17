@@ -248,7 +248,7 @@ app.delete('/productos/:id', verificaToken, (req, res) => {
                 mensaje: 'Producto borrado'
             });
 
-        })
+        });
 
     });
 

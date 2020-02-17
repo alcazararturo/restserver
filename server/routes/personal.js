@@ -1,16 +1,16 @@
 const express = require('express');
-
-const { verificaToken } = require('../middlewares/autenticacion');
-
-
+let { verificaToken } = require('../middlewares/autenticacion');
 let app = express();
-let personal = require('../models/personal');
+let Personal = require('../models/personal');
 
+app.use(express.urlencoded({
+    extended: true
+}));
 
 // ===========================
 //  Obtener personal
 // ===========================
-app.get('/personal', verificaToken, (req, res) => {
+app.get('/personal', verificaToken, async (req, res) => {
     // trae todo personal
     // populate: usuario produto
     // paginado
@@ -18,7 +18,7 @@ app.get('/personal', verificaToken, (req, res) => {
     let desde = req.query.desde || 0;
     desde = Number(desde);
 
-    personal.find({ disponible: true })
+    await Personal.find({ disponible: true })
         .skip(desde)
         .limit(5)
         .populate('usuario', 'nombre email')
@@ -38,21 +38,21 @@ app.get('/personal', verificaToken, (req, res) => {
             });
 
 
-        })
+        });
 
 });
 
 // ===========================
 //  Obtener un personal por ID
 // ===========================
-app.get('/personal/:id', (req, res) => {
+app.get('/personal/:id', async (req, res) => {
     // populate: usuario producto
     // paginado
     let id = req.params.id;
 
-    personal.findOne({_id:id})
-        .populate('usuario', 'nombre email')
-        .populate('producto', 'nombre')
+    await Personal.findOne({_id:id})
+       // .populate('usuario', 'nombre email')
+       //  .populate('producto', 'nombre')
         .exec((err, personalDB) => {
 
             if (err) {
@@ -83,14 +83,14 @@ app.get('/personal/:id', (req, res) => {
 // ===========================
 //  Buscar personal
 // ===========================
-app.get('/personal/buscar/:termino', verificaToken, (req, res) => {
+app.get('/personal/buscar/:termino', verificaToken, async (req, res) => {
 
     let termino = req.params.termino;
 
     let regex = new RegExp(termino, 'i');
 
-    personal.find({ nombre: regex })
-        .populate('producto', 'nombre')
+    await Personal.find({ nombre: regex })
+       // .populate('producto', 'nombre')
         .exec((err, personal) => {
 
 
@@ -104,9 +104,9 @@ app.get('/personal/buscar/:termino', verificaToken, (req, res) => {
             res.json({
                 ok: true,
                 personal
-            })
+            });
 
-        })
+        });
 
 
 });
@@ -116,23 +116,25 @@ app.get('/personal/buscar/:termino', verificaToken, (req, res) => {
 // ===========================
 //  Crear un nuevo personal
 // ===========================
-app.post('/personal', verificaToken, (req, res) => {
+app.post('/personal', verificaToken, async (req, res) => {
     // grabar el usuario
     // grabar una producto del listado 
 
     let body = req.body;
 
-    let personal = new personal({
+    console.log(body);
+
+    let personal = new Personal({
         usuario: req.usuario._id,
         nombre: body.nombre,
-        precioUni: body.precioUni,
-        descripcion: body.descripcion,
-        genero: body.genero,
+        email: body.email,
+        img: body.img,
+        rfc: body.rfc,
         disponible: body.disponible,
-        producto: [ body.producto ]
+        productos: body.productos
     });
 
-    personal.save((err, personalDB) => {
+    await personal.save((err, personalDB) => {
 
         if (err) {
             return res.status(500).json({
@@ -153,14 +155,14 @@ app.post('/personal', verificaToken, (req, res) => {
 // ===========================
 //  Actualizar un personal
 // ===========================
-app.put('/personal/:id', verificaToken, (req, res) => {
+app.put('/personal/:id', verificaToken, async (req, res) => {
     // grabar el usuario
     // grabar una producto del listado 
 
     let id = req.params.id;
     let body = req.body;
 
-    personal.findOne({_id:id}, (err, personalDB) => {
+    await Personal.findOne({_id:id}, (err, personalDB) => {
 
         if (err) {
             return res.status(500).json({
@@ -179,11 +181,9 @@ app.put('/personal/:id', verificaToken, (req, res) => {
         }
 
         personalDB.nombre = body.nombre;
-        personalDB.precioUni = body.precioUni;
-        personalDB.producto = body.producto;
-        personalDB.genero = body.genero;
-        personalDB.disponible = body.disponible;
-        personalDB.descripcion = body.descripcion;
+        personalDB.rfc = body.rfc;
+        personalDB.img = body.img;
+        personalDB.productos = body.productos;
 
         personalDB.save((err, personalGuardado) => {
 
@@ -209,11 +209,11 @@ app.put('/personal/:id', verificaToken, (req, res) => {
 // ===========================
 //  Borrar un personal
 // ===========================
-app.delete('/personal/:id', verificaToken, (req, res) => {
+app.delete('/personal/:id', verificaToken, async (req, res) => {
 
     let id = req.params.id;
 
-    personal.findOne({_id:id}, (err, personalDB) => {
+    await Personal.findOne({_id:id}, (err, personalDB) => {
 
         if (err) {
             return res.status(500).json({
@@ -248,16 +248,12 @@ app.delete('/personal/:id', verificaToken, (req, res) => {
                 mensaje: 'personal borrado'
             });
 
-        })
+        });
 
     });
 
 
 });
-
-
-
-
 
 
 module.exports = app;

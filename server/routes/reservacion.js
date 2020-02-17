@@ -4,17 +4,18 @@ let { verificaToken, verificaAdmin_Role } = require('../middlewares/autenticacio
 
 let app = express();
 
-let Categoria = require('../models/categoria');
+let Reservacion = require('../models/reservacion');
 
 // ============================
-// Mostrar todas las categorias
+// Mostrar todas las Reservaciones
 // ============================
-app.get('/categoria', verificaToken, (req, res) => {
+app.get('/reservacion', verificaToken, async (req, res) => {
 
-    Categoria.find({})
+    await Reservacion.find({})
         .sort('descripcion')
         .populate('usuario', 'nombre email')
-        .exec((err, categorias) => {
+        .populate('personal', 'nombre')
+        .exec((err, reservacion) => {
 
             if (err) {
                 return res.status(500).json({
@@ -25,21 +26,21 @@ app.get('/categoria', verificaToken, (req, res) => {
 
             res.json({
                 ok: true,
-                categorias
+                reservacion
             });
 
-        });
+        })
 });
 
 // ============================
-// Mostrar una categoria por ID
+// Mostrar una Reservacion por ID
 // ============================
-app.get('/categoria/:id', verificaToken, (req, res) => {
-    // Categoria.findById(....);
+app.get('/reservacion/:id', verificaToken, async (req, res) => {
+    // Reservacion.findById(....);
 
     let id = req.params.id;
 
-    Categoria.findOne({_id:id}, (err, categoriaDB) => {
+    await Reservacion.findOne({_id:id}, (err, reservacionDB) => {
 
         if (err) {
             return res.status(500).json({
@@ -48,7 +49,7 @@ app.get('/categoria/:id', verificaToken, (req, res) => {
             });
         }
 
-        if (!categoriaDB) {
+        if (!reservacionDB) {
             return res.status(500).json({
                 ok: false,
                 err: {
@@ -60,7 +61,7 @@ app.get('/categoria/:id', verificaToken, (req, res) => {
 
         res.json({
             ok: true,
-            categoria: categoriaDB
+            reservacion: reservacionDB
         });
 
     });
@@ -69,20 +70,23 @@ app.get('/categoria/:id', verificaToken, (req, res) => {
 });
 
 // ============================
-// Crear nueva categoria
+// Crear nueva Reservacion
 // ============================
-app.post('/categoria', verificaToken, (req, res) => {
-    // regresa la nueva categoria
+app.post('/reservacion', verificaToken, async (req, res) => {
+    // regresa la nueva Reservacion
     // req.usuario._id
     let body = req.body;
 
-    let categoria = new Categoria({
+    let reservacion = new Reservacion({
+        fechapedido: body.fechapedido,
         descripcion: body.descripcion,
+        personal: body.personal,
+        producto: body.producto,
         usuario: req.usuario._id
     });
 
 
-    categoria.save((err, categoriaDB) => {
+    await reservacion.save((err, reservacionDB) => {
 
         if (err) {
             return res.status(500).json({
@@ -91,7 +95,7 @@ app.post('/categoria', verificaToken, (req, res) => {
             });
         }
 
-        if (!categoriaDB) {
+        if (!reservacionDB) {
             return res.status(400).json({
                 ok: false,
                 err
@@ -100,7 +104,7 @@ app.post('/categoria', verificaToken, (req, res) => {
 
         res.json({
             ok: true,
-            categoria: categoriaDB
+            reservacion: reservacionDB
         });
 
 
@@ -110,16 +114,16 @@ app.post('/categoria', verificaToken, (req, res) => {
 });
 
 // ============================
-// actualiza una categoria por id
+// actualiza una Reservacion por id
 // ============================
-app.put('/categoria/:id', verificaToken, (req, res) => {
+app.put('/reservacion/:id', verificaToken, async (req, res) => {
     // grabar el usuario
-    // grabar una categoria del listado 
+    // grabar una Reservacion del listado 
 
     let id = req.params.id;
     let body = req.body;
 
-    Categoria.findOne({_id:id}, (err, categoriaDB) => {
+    await Reservacion.findOne({_id:id}, (err, reservacionDB) => {
         
         if (err) {
             return res.status(500).json({
@@ -128,7 +132,7 @@ app.put('/categoria/:id', verificaToken, (req, res) => {
             });
         }
 
-        if (!categoriaDB) {
+        if (!reservacionDB) {
             return res.status(400).json({
                 ok: false,
                 err: {
@@ -137,10 +141,12 @@ app.put('/categoria/:id', verificaToken, (req, res) => {
             });
         }
 
-        categoriaDB.descripcion = body.descripcion;
-        categoriaDB.img         = body.img;
+        reservacionDB.descripcion = body.descripcion;
+        reservacionDB.img         = body.img;
+        reservacionDB.status      = body.status;
+        reservacionDB.fechaStatus = body.fechaStatus;
 
-        categoriaDB.save((err, categoriaGuardado) => {
+        reservacionDB.save((err, reservacionGuardado) => {
 
             if (err) {
                 return res.status(500).json({
@@ -151,7 +157,7 @@ app.put('/categoria/:id', verificaToken, (req, res) => {
 
             res.json({
                 ok: true,
-                categoria: categoriaGuardado
+                reservacion: reservacionGuardado
             });
 
         });
@@ -161,14 +167,14 @@ app.put('/categoria/:id', verificaToken, (req, res) => {
 });
 
 // ============================
-// elimina una categoria por id
+// elimina una Reservacion por id
 // ============================
-app.delete('/categoria/:id', [verificaToken, verificaAdmin_Role], (req, res) => {
-    // solo un administrador puede borrar categorias
-    // Categoria.findByIdAndRemove
+app.delete('/reservacion/:id', [verificaToken, verificaAdmin_Role], async (req, res) => {
+    // solo un administrador puede borrar Reservacion
+    // Reservacion.findByIdAndRemove
     let id = req.params.id;
     // 
-    Categoria.remove({_id:id}, (err, categoriaDB) => {
+    await Reservacion.findOne({_id:id}, (err, reservacionDB) => {
 
         if (err) {
             return res.status(500).json({
@@ -177,7 +183,7 @@ app.delete('/categoria/:id', [verificaToken, verificaAdmin_Role], (req, res) => 
             });
         }
 
-        if (!categoriaDB) {
+        if (!reservacionDB) {
             return res.status(400).json({
                 ok: false,
                 err: {
@@ -186,13 +192,25 @@ app.delete('/categoria/:id', [verificaToken, verificaAdmin_Role], (req, res) => 
             });
         }
         
-        return res.json({
+        reservacionDB.estado = false;
+
+        reservacionDB.save((err, reservacionBorrado) => {
+
+            if (err) {
+                return res.status(500).json({
+                    ok: false,
+                    err
+                });
+            }
+
+            res.json({
                 ok: true,
-                message: 'Categoria Borrada'
+                producto: reservacionBorrado,
+                mensaje: 'Reservacion borrado'
+            });
+
         });
-
         
-
     });
 
 

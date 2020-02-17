@@ -2,31 +2,36 @@
   "name": "restserver",
   "version": "1.0.0",
   "engines": {
-    "node": "10.16.0"
+    "node": "12.14.1"
   },
   "description": "",
   "main": "index.js",
   "scripts": {
     "start": "node server/server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "generate-vapid": "web-push generate-vapid-keys --json > server/vapid.json"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "bcrypt": "^3.0.6",
+    "bcrypt": "^3.0.8",
     "body-parser": "^1.19.0",
-    "cloudinary": "^1.14.0",
+    "cloudinary": "^1.19.0",
     "express": "^4.17.1",
-    "express-fileupload": "^1.1.5",
-    "google-auth-library": "^4.2.5",
+    "express-fileupload": "^1.1.6",
+    "firebase-admin": "^8.9.2",
+    "google-auth-library": "^4.2.6",
+    "jshint": "^2.11.0",
     "jsonwebtoken": "^8.5.1",
     "mongo-client": "^0.2.1",
-    "mongodb": "^3.2.7",
-    "mongoose": "^5.6.1",
+    "mongodb": "^3.5.2",
+    "mongoose": "^5.8.11",
     "mongoose-unique-validator": "^2.0.3",
     "multer": "^1.4.2",
     "multer-storage-cloudinary": "^2.2.1",
-    "nodemon": "^1.19.1",
-    "underscore": "^1.9.1"
+    "nodemon": "^1.19.4",
+    "underscore": "^1.9.2",
+    "urlsafe-base64": "^1.0.0",
+    "web-push": "^3.4.3"
   }
 }

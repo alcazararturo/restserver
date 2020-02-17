@@ -6,19 +6,16 @@ const jwt = require('jsonwebtoken');
 const { OAuth2Client } = require('google-auth-library');
 const client = new OAuth2Client(process.env.CLIENT_ID);
 
-
-
 const Usuario = require('../models/usuario');
+const push = require('./push');
 
 const app = express();
 
-
-
-app.post('/login', (req, res) => {
+app.post('/login', async (req, res) => {
 
     let body = req.body;
 
-    Usuario.findOne({ email: body.email }, (err, usuarioDB) => {
+    await Usuario.findOne({ email: body.email }, (err, usuarioDB) => {
 
         if (err) {
             return res.status(500).json({
@@ -206,9 +203,6 @@ function obtenerMenu(ROLE) {
     return menu;
 
 }
-
-
-
 
 
 module.exports = app;

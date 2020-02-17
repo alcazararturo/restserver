@@ -40,17 +40,28 @@ client.connect(err => {
 
 */
 
-
-mongoose.connect(process.env.URLDB, (err, res) => {
-				
+/*
+mongoose.connect(process.env.URLDB, (err, res) => {				
     if (err) throw err;
-
     console.log('Base de datos ONLINE');
+}); */
 
-});
+const options = {
+    useNewUrlParser: true,
+    useCreateIndex: true,
+    useFindAndModify: true,
+    useUnifiedTopology: true,
+    autoIndex: false // Don't build indexes
+  };
 
-
+try {
+    mongoose.connect( process.env.URLDB, options );
+    console.log('Base de datos ONLINE');
+} catch (error) {
+    console.log(error);
+}
 
 app.listen(process.env.PORT, () => {
     console.log('Escuchando puerto: ', process.env.PORT);
+    console.log('Variable de entorno: ', process.env);
 });

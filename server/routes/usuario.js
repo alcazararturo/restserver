@@ -10,7 +10,7 @@ const { verificaToken, verificaAdmin_Role } = require('../middlewares/autenticac
 const app = express();
 
 
-app.get('/usuario', verificaToken, (req, res) => {
+app.get('/usuario', verificaToken, async (req, res) => {
 
 
     let desde = req.query.desde || 0;
@@ -19,7 +19,7 @@ app.get('/usuario', verificaToken, (req, res) => {
     let limite = req.query.limite || 5;
     limite = Number(limite);
 
-    Usuario.find({ estado: true }, 'nombre email role estado google img')
+    await Usuario.find({ estado: true }, 'nombre email role estado google img')
         .skip(desde)
         .limit(limite)
         .exec((err, usuarios) => {
@@ -47,7 +47,7 @@ app.get('/usuario', verificaToken, (req, res) => {
 
 });
 
-app.post('/usuario',  function(req, res) {
+app.post('/usuario',  async function(req, res) {
 
     let body = req.body;
 
@@ -59,7 +59,7 @@ app.post('/usuario',  function(req, res) {
     });
 
 
-    usuario.save((err, usuarioDB) => {
+    await usuario.save((err, usuarioDB) => {
 
         if (err) {
             return res.status(400).json({
@@ -84,12 +84,12 @@ app.post('/usuario',  function(req, res) {
 
 });
 
-app.put('/usuario/:id', [verificaToken, verificaAdmin_Role], function(req, res) {
+app.put('/usuario/:id', [verificaToken, verificaAdmin_Role], async function(req, res) {
 
     let id = req.params.id;
     let body = _.pick(req.body, ['nombre', 'email', 'img', 'role', 'estado']);
 
-    Usuario.findByIdAndUpdate(id, body, { new: true, runValidators: true }, (err, usuarioDB) => {
+    await Usuario.findByIdAndUpdate(id, body, { new: true, runValidators: true }, (err, usuarioDB) => {
 
         if (err) {
             return res.status(400).json({
@@ -98,18 +98,16 @@ app.put('/usuario/:id', [verificaToken, verificaAdmin_Role], function(req, res) 
             });
         }
 
-
-
         res.json({
             ok: true,
             usuario: usuarioDB
         });
 
-    })
+    });
 
 });
 
-app.delete('/usuario/:id', [verificaToken, verificaAdmin_Role], function(req, res) {
+app.delete('/usuario/:id', [verificaToken, verificaAdmin_Role], async function(req, res) {
 
 
     let id = req.params.id;
@@ -120,7 +118,7 @@ app.delete('/usuario/:id', [verificaToken, verificaAdmin_Role], function(req, re
         estado: false
     };
 
-    Usuario.findByIdAndUpdate(id, cambiaEstado, { new: true }, (err, usuarioBorrado) => {
+    await Usuario.findByIdAndUpdate(id, cambiaEstado, { new: true }, (err, usuarioBorrado) => {
 
         if (err) {
             return res.status(400).json({
@@ -144,8 +142,6 @@ app.delete('/usuario/:id', [verificaToken, verificaAdmin_Role], function(req, re
         });
 
     });
-
-
 
 });
 
