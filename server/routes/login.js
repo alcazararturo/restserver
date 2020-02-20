@@ -49,7 +49,7 @@ app.post('/login', async (req, res) => {
         res.json({
             ok: true,
             usuario: usuarioDB,
-            token,
+            token: token,
             id: usuarioDB._id
             // menu: obtenerMenu(usuarioDB.role)
         });
@@ -84,7 +84,7 @@ app.post('/google', async(req, res) => {
 
     let token = req.body.idtoken;
 
-    let googleUser = await verify(token)
+    let googleUser = verify(token)
         .catch(e => {
             return res.status(403).json({
                 ok: false,
@@ -93,7 +93,7 @@ app.post('/google', async(req, res) => {
         });
 
 
-    Usuario.findOne({ email: googleUser.email }, (err, usuarioDB) => {
+    await Usuario.findOne({ email: googleUser.email }, (err, usuarioDB) => {
 
         if (err) {
             return res.status(500).json({

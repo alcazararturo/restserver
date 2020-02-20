@@ -107,11 +107,8 @@ app.get('/personal/buscar/:termino', verificaToken, async (req, res) => {
             });
 
         });
-
-
+        
 });
-
-
 
 // ===========================
 //  Crear un nuevo personal

@@ -6,7 +6,7 @@ const { verificaToken } = require('../middlewares/autenticacion');
 var app = express();
 var Movimiento = require('../models/movimiento');
 
-app.get('/movimiento', verificaToken, (req, res) => {
+app.get('/movimiento', verificaToken, async (req, res) => {
 
     // trae todo personal
     // populate: usuario produto
@@ -15,7 +15,7 @@ app.get('/movimiento', verificaToken, (req, res) => {
     let desde = req.query.desde || 0;
     desde = Number(desde);
 
-    Movimiento.find({ status: true })
+    await Movimiento.find({ status: true })
         .skip(desde)
         .limit(5)
        // .populate('usuario', 'nombre email')
@@ -38,3 +38,6 @@ app.get('/movimiento', verificaToken, (req, res) => {
         });
 
 });
+
+
+module.exports = app;

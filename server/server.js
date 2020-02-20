@@ -17,7 +17,7 @@ app.use(function(req, res, next) {
 const bodyParser = require('body-parser');
 
 // parse application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.urlencoded({ extended: false }));
 
 // parse application/json
 app.use(bodyParser.json());
@@ -30,7 +30,6 @@ app.use(express.static(path.resolve(__dirname, '../public')));
 app.use(require('./routes/index'));
 
 /*
-
 const client = new MongoClient(uri, { useNewUrlParser: true });
 client.connect(err => {
   const collection = client.db("test").collection("devices");

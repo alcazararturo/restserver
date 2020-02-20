@@ -6,8 +6,8 @@ let Pedido = require('../models/pedido');
 // ============================
 // Mostrar todos los pedidos
 // ============================
-app.get('/pedido', verificaToken, (req, res) => {
-    Pedido.find({ estado: true })
+app.get('/pedido', verificaToken, async (req, res) => {
+    await Pedido.find({ estado: true })
         .sort('descripcion')
         .populate('usuario', 'nombre email')
         .exec((err, pedidos) => {
@@ -18,10 +18,10 @@ app.get('/pedido', verificaToken, (req, res) => {
 // ============================
 // Mostrar un pedido por ID
 // ============================
-app.get('/pedido/:id', verificaToken, (req, res) => {
+app.get('/pedido/:id', verificaToken, async (req, res) => {
     // Categoria.findById(....);
     let id = req.params.id;
-    Pedido.findOne({_id:id}, (err, pedidoDB) => {
+    await Pedido.findOne({_id:id}, (err, pedidoDB) => {
         if (err) { return res.status(500).json({ ok: false, err }); }
         if (!pedidoDB) { return res.status(500).json({ ok: false, err: { message: 'El ID no es correcto' } }); }
         res.json({ ok: true, pedido: pedidoDB });
@@ -30,7 +30,7 @@ app.get('/pedido/:id', verificaToken, (req, res) => {
 // ============================
 // Crear nuevo pedido
 // ============================
-app.post('/pedido', verificaToken, (req, res) => {
+app.post('/pedido', verificaToken, async (req, res) => {
     // regresa el nuevo pedido
     // req.usuario._id
     let body = req.body;
@@ -41,7 +41,7 @@ app.post('/pedido', verificaToken, (req, res) => {
         status: body.status,
         usuario: req.usuario._id
     });
-    pedido.save((err, pedidoDB) => {
+    await pedido.save((err, pedidoDB) => {
         if (err) { return res.status(500).json({ ok: false, err }); }
         if (!pedidoDB) {
             return res.status(400).json({ ok: false, err });
@@ -52,12 +52,12 @@ app.post('/pedido', verificaToken, (req, res) => {
 // ============================
 // Actualiza un pedido x ID
 // ============================
-app.put('/pedido/:id', verificaToken, (req, res) => {
+app.put('/pedido/:id', verificaToken, async(req, res) => {
     let id = req.params.id;
     let body = req.body;
     let usuario = req.usuario._id;
 
-    Pedido.findOne({_id:id}, (err, pedidoDB) => {
+    await Pedido.findOne({_id:id}, (err, pedidoDB) => {
 
         if (err) {
             return res.status(500).json({
@@ -102,9 +102,9 @@ app.put('/pedido/:id', verificaToken, (req, res) => {
 // ===========================
 //  Borrar un pedido
 // ===========================
-app.delete('/pedido/:id', verificaToken, verificaAdmin_Role, (req, res) => {
+app.delete('/pedido/:id', verificaToken, verificaAdmin_Role, async (req, res) => {
     let id = req.params.id;
-    Pedido.findOne({_id:id}, (err, pedidoDB) => {
+    await Pedido.findOne({_id:id}, (err, pedidoDB) => {
         if (err) { return res.status(500).json({ ok: false, err }); }
         if (!pedidoDB) { return res.status(400).json({ ok: false, err: { message: 'ID no existe' } }); }
         pedidoDB.estado = false;

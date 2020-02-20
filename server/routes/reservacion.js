@@ -11,7 +11,7 @@ let Reservacion = require('../models/reservacion');
 // ============================
 app.get('/reservacion', verificaToken, async (req, res) => {
 
-    await Reservacion.find({})
+    await Reservacion.find({estado:true})
         .sort('descripcion')
         .populate('usuario', 'nombre email')
         .populate('personal', 'nombre')

@@ -9,9 +9,9 @@ let Categoria = require('../models/categoria');
 // ============================
 // Mostrar todas las categorias
 // ============================
-app.get('/categoria', verificaToken, (req, res) => {
+app.get('/categoria', verificaToken, async(req, res) => {
 
-    Categoria.find({})
+    await Categoria.find({})
         .sort('descripcion')
         .populate('usuario', 'nombre email')
         .exec((err, categorias) => {
@@ -34,12 +34,12 @@ app.get('/categoria', verificaToken, (req, res) => {
 // ============================
 // Mostrar una categoria por ID
 // ============================
-app.get('/categoria/:id', verificaToken, (req, res) => {
+app.get('/categoria/:id', verificaToken, async (req, res) => {
     // Categoria.findById(....);
 
     let id = req.params.id;
 
-    Categoria.findOne({_id:id}, (err, categoriaDB) => {
+    await Categoria.findOne({_id:id}, (err, categoriaDB) => {
 
         if (err) {
             return res.status(500).json({
@@ -71,7 +71,7 @@ app.get('/categoria/:id', verificaToken, (req, res) => {
 // ============================
 // Crear nueva categoria
 // ============================
-app.post('/categoria', verificaToken, (req, res) => {
+app.post('/categoria', verificaToken, async (req, res) => {
     // regresa la nueva categoria
     // req.usuario._id
     let body = req.body;
@@ -82,7 +82,7 @@ app.post('/categoria', verificaToken, (req, res) => {
     });
 
 
-    categoria.save((err, categoriaDB) => {
+    await categoria.save((err, categoriaDB) => {
 
         if (err) {
             return res.status(500).json({
@@ -112,14 +112,14 @@ app.post('/categoria', verificaToken, (req, res) => {
 // ============================
 // actualiza una categoria por id
 // ============================
-app.put('/categoria/:id', verificaToken, (req, res) => {
+app.put('/categoria/:id', verificaToken, async (req, res) => {
     // grabar el usuario
     // grabar una categoria del listado 
 
     let id = req.params.id;
     let body = req.body;
 
-    Categoria.findOne({_id:id}, (err, categoriaDB) => {
+    await Categoria.findOne({_id:id}, (err, categoriaDB) => {
         
         if (err) {
             return res.status(500).json({
@@ -163,12 +163,12 @@ app.put('/categoria/:id', verificaToken, (req, res) => {
 // ============================
 // elimina una categoria por id
 // ============================
-app.delete('/categoria/:id', [verificaToken, verificaAdmin_Role], (req, res) => {
+app.delete('/categoria/:id', [verificaToken, verificaAdmin_Role], async (req, res) => {
     // solo un administrador puede borrar categorias
     // Categoria.findByIdAndRemove
     let id = req.params.id;
     // 
-    Categoria.remove({_id:id}, (err, categoriaDB) => {
+    await Categoria.remove({_id:id}, (err, categoriaDB) => {
 
         if (err) {
             return res.status(500).json({

@@ -10,7 +10,7 @@ let Producto = require('../models/producto');
 // ===========================
 //  Obtener productos
 // ===========================
-app.get('/productos', verificaToken, (req, res) => {
+app.get('/productos', verificaToken, async (req, res) => {
     // trae todos los productos
     // populate: usuario categoria
     // paginado
@@ -18,7 +18,7 @@ app.get('/productos', verificaToken, (req, res) => {
     let desde = req.query.desde || 0;
     desde = Number(desde);
 
-    Producto.find({ disponible: true })
+    await Producto.find({ disponible: true })
         .skip(desde)
         .limit(5)
         .populate('usuario', 'nombre email')
@@ -45,12 +45,12 @@ app.get('/productos', verificaToken, (req, res) => {
 // ===========================
 //  Obtener un producto por ID
 // ===========================
-app.get('/productos/:id', (req, res) => {
+app.get('/productos/:id', async (req, res) => {
     // populate: usuario categoria
     // paginado
     let id = req.params.id;
 
-    Producto.findOne({_id:id})
+    await Producto.findOne({_id:id})
         .populate('usuario', 'nombre email')
         .populate('categoria', 'nombre')
         .exec((err, productoDB) => {
@@ -83,13 +83,13 @@ app.get('/productos/:id', (req, res) => {
 // ===========================
 //  Buscar productos
 // ===========================
-app.get('/productos/buscar/:termino', verificaToken, (req, res) => {
+app.get('/productos/buscar/:termino', verificaToken, async (req, res) => {
 
     let termino = req.params.termino;
 
     let regex = new RegExp(termino, 'i');
 
-    Producto.find({ nombre: regex })
+    await Producto.find({ nombre: regex })
         .populate('categoria', 'nombre')
         .exec((err, productos) => {
 
@@ -116,7 +116,7 @@ app.get('/productos/buscar/:termino', verificaToken, (req, res) => {
 // ===========================
 //  Crear un nuevo producto
 // ===========================
-app.post('/productos', verificaToken, (req, res) => {
+app.post('/productos', verificaToken, async (req, res) => {
     // grabar el usuario
     // grabar una categoria del listado 
 
@@ -132,7 +132,7 @@ app.post('/productos', verificaToken, (req, res) => {
         categoria: body.categoria
     });
 
-    producto.save((err, productoDB) => {
+    await producto.save((err, productoDB) => {
 
         if (err) {
             return res.status(500).json({
@@ -153,14 +153,14 @@ app.post('/productos', verificaToken, (req, res) => {
 // ===========================
 //  Actualizar un producto
 // ===========================
-app.put('/productos/:id', verificaToken, (req, res) => {
+app.put('/productos/:id', verificaToken, async (req, res) => {
     // grabar el usuario
     // grabar una categoria del listado 
 
     let id = req.params.id;
     let body = req.body;
 
-    Producto.findOne({_id:id}, (err, productoDB) => {
+    await Producto.findOne({_id:id}, (err, productoDB) => {
 
         if (err) {
             return res.status(500).json({
@@ -209,11 +209,11 @@ app.put('/productos/:id', verificaToken, (req, res) => {
 // ===========================
 //  Borrar un producto
 // ===========================
-app.delete('/productos/:id', verificaToken, (req, res) => {
+app.delete('/productos/:id', verificaToken, async (req, res) => {
 
     let id = req.params.id;
 
-    Producto.findOne({_id:id}, (err, productoDB) => {
+    await Producto.findOne({_id:id}, (err, productoDB) => {
 
         if (err) {
             return res.status(500).json({
@@ -254,10 +254,6 @@ app.delete('/productos/:id', verificaToken, (req, res) => {
 
 
 });
-
-
-
-
 
 
 module.exports = app;
