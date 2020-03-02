@@ -37,9 +37,7 @@ app.get('/personal', verificaToken, async (req, res) => {
                 personal
             });
 
-
         });
-
 });
 
 // ===========================
@@ -127,6 +125,7 @@ app.post('/personal', verificaToken, async (req, res) => {
         email: body.email,
         img: body.img,
         rfc: body.rfc,
+        descripcion: body.descripcion,
         disponible: body.disponible,
         productos: body.productos
     });
@@ -180,6 +179,7 @@ app.put('/personal/:id', verificaToken, async (req, res) => {
         personalDB.nombre = body.nombre;
         personalDB.rfc = body.rfc;
         personalDB.img = body.img;
+        personalDB.descripcion = body.descripcion;
         personalDB.productos = body.productos;
 
         personalDB.save((err, personalGuardado) => {

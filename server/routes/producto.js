@@ -38,7 +38,7 @@ app.get('/productos', verificaToken, async (req, res) => {
             });
 
 
-        })
+        });
 
 });
 
@@ -104,9 +104,9 @@ app.get('/productos/buscar/:termino', verificaToken, async (req, res) => {
             res.json({
                 ok: true,
                 productos
-            })
+            });
 
-        })
+        });
 
 
 });

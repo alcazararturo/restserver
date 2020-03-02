@@ -7,6 +7,7 @@ let personalSchema = new Schema({
     email:  { type: String, unique: true, required: [true, 'El correo es necesario'] },
     img: { type: String, required: false },
     rfc: { type: String, required: false},
+    descripcion: { type: String, required: false},
     disponible: { type: Boolean, default: true },
     productos: [ { type: Schema.Types.ObjectId, ref: 'Producto' } ],
     usuario: { type: Schema.Types.ObjectId, ref: 'Usuario' }
