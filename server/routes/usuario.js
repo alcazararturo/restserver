@@ -89,7 +89,7 @@ app.put('/usuario/:id', [verificaToken, verificaAdmin_Role], async function(req,
     let id = req.params.id;
     let body = _.pick(req.body, ['nombre', 'email', 'img', 'role', 'estado']);
 
-    await Usuario.findByIdAndUpdate(id, body, { new: true, runValidators: true }, (err, usuarioDB) => {
+    await Usuario.findOneAndUpdate(id, body, { new: true, runValidators: true }, (err, usuarioDB) => {
 
         if (err) {
             return res.status(400).json({
@@ -118,7 +118,7 @@ app.delete('/usuario/:id', [verificaToken, verificaAdmin_Role], async function(r
         estado: false
     };
 
-    await Usuario.findByIdAndUpdate(id, cambiaEstado, { new: true }, (err, usuarioBorrado) => {
+    await Usuario.findOneAndUpdate(id, cambiaEstado, { new: true }, (err, usuarioBorrado) => {
 
         if (err) {
             return res.status(400).json({

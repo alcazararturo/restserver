@@ -52,7 +52,7 @@ app.get('/productos/:id', async (req, res) => {
 
     await Producto.findOne({_id:id})
         .populate('usuario', 'nombre email')
-        .populate('categoria', 'nombre')
+        .populate('categoria', 'descripcion img')
         .exec((err, productoDB) => {
 
             if (err) {
@@ -90,7 +90,7 @@ app.get('/productos/buscar/:termino', verificaToken, async (req, res) => {
     let regex = new RegExp(termino, 'i');
 
     await Producto.find({ nombre: regex })
-        .populate('categoria', 'nombre')
+        .populate('categoria', 'descripcion img')
         .exec((err, productos) => {
 
 

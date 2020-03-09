@@ -78,7 +78,8 @@ app.post('/categoria', verificaToken, async (req, res) => {
 
     let categoria = new Categoria({
         descripcion: body.descripcion,
-        usuario: req.usuario._id
+        usuario: req.usuario._id,
+        img: req.body.img
     });
 
 

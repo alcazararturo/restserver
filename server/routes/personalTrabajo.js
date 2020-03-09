@@ -1,28 +1,26 @@
 const express = require('express');
 let { verificaToken } = require('../middlewares/autenticacion');
 let app = express();
-let Personal = require('../models/personal');
+let PersonalTrabajo = require('../models/personalTrabajo');
 
 app.use(express.urlencoded({
     extended: true
 }));
 
 // ===========================
-//  Obtener personal
+//  Obtener personal trabajos
 // ===========================
-app.get('/personal', verificaToken, async (req, res) => {
-    // trae todo personal
-    // populate: usuario produto
-    // paginado
+app.get('/personaltrabajo', verificaToken, async (req, res) => {
 
     let desde = req.query.desde || 0;
     desde = Number(desde);
 
-    await Personal.find({ disponible: true })
+    await PersonalTrabajo.find({ disponible: true })
         .skip(desde)
         .limit(5)
         .populate('usuario', 'nombre email')
-        .exec((err, personal) => {
+        .populate('categoria', 'descripcion img')
+        .exec((err, personaltrabajo) => {
 
             if (err) {
                 return res.status(500).json({
@@ -33,24 +31,22 @@ app.get('/personal', verificaToken, async (req, res) => {
 
             res.json({
                 ok: true,
-                personal
+                personaltrabajo
             });
 
         });
 });
 
 // ===========================
-//  Obtener un personal por ID
+//  Obtener un personal por personal y categoria
 // ===========================
-app.get('/personal/:id', async (req, res) => {
-    // populate: usuario producto
-    // paginado
-    let id = req.params.id;
+app.get('/personaltrabajo/:personal&:categoria', async (req, res) => {
+    
+    let personal  = req.params.personal;
+    let categoria = req.params.categoria;
 
-    await Personal.findOne({_id:id})
-       // .populate('usuario', 'nombre email')
-       //  .populate('producto', 'nombre')
-        .exec((err, personalDB) => {
+    await PersonalTrabajo.findOne({personal:personal, categoria:categoria})
+        .exec((err, personaltrabajoDB) => {
 
             if (err) {
                 return res.status(500).json({
@@ -59,7 +55,7 @@ app.get('/personal/:id', async (req, res) => {
                 });
             }
 
-            if (!personalDB) {
+            if (!personaltrabajoDB) {
                 return res.status(400).json({
                     ok: false,
                     err: {
@@ -70,7 +66,43 @@ app.get('/personal/:id', async (req, res) => {
 
             res.json({
                 ok: true,
-                personal: personalDB
+                personaltrabajo: personaltrabajoDB.fotos
+            });
+
+        });
+
+});
+
+// ===========================
+//  Obtener un personal por personal
+// ===========================
+app.get('/personaltrabajo/:personal', async (req, res) => {
+    
+    let personal  = req.params.personal;
+
+    await PersonalTrabajo.find({personal:personal})
+        .populate('categoria', 'descripcion img')   
+        .exec((err, personaltrabajoDB) => {
+
+            if (err) {
+                return res.status(500).json({
+                    ok: false,
+                    err
+                });
+            }
+
+            if (!personaltrabajoDB) {
+                return res.status(400).json({
+                    ok: false,
+                    err: {
+                        message: 'ID no existe'
+                    }
+                });
+            }
+
+            res.json({
+                ok: true,
+                personaltrabajo: personaltrabajoDB
             });
 
         });
@@ -80,15 +112,14 @@ app.get('/personal/:id', async (req, res) => {
 // ===========================
 //  Buscar personal
 // ===========================
-app.get('/personal/buscar/:termino', verificaToken, async (req, res) => {
+app.get('/personaltrabajo/buscar/:termino', verificaToken, async (req, res) => {
 
     let termino = req.params.termino;
 
     let regex = new RegExp(termino, 'i');
 
-    await Personal.find({ nombre: regex })
-       // .populate('producto', 'nombre')
-        .exec((err, personal) => {
+    await PersonalTrabajo.find({ nombre: regex })
+        .exec((err, personaltrabajo) => {
 
 
             if (err) {
@@ -100,7 +131,7 @@ app.get('/personal/buscar/:termino', verificaToken, async (req, res) => {
 
             res.json({
                 ok: true,
-                personal
+                personaltrabajo
             });
 
         });
@@ -110,27 +141,18 @@ app.get('/personal/buscar/:termino', verificaToken, async (req, res) => {
 // ===========================
 //  Crear un nuevo personal
 // ===========================
-app.post('/personal', verificaToken, async (req, res) => {
-    // grabar el usuario
-    // grabar una producto del listado 
+app.post('/personaltrabajo', verificaToken, async (req, res) => {
 
     let body = req.body;
 
-    console.log(body);
-
-    let personal = new Personal({
+    let personaltrabajo = new PersonalTrabajo({
         usuario: req.usuario._id,
-        nombre: body.nombre,
-        email: body.email,
-        img: body.img,
-        rfc: body.rfc,
-        descripcion: body.descripcion,
-        voteAverage : body.voteAverage,
-        disponible: body.disponible,
-        /*productos: body.productos*/
+        personal: body.personal,
+        categoria: body.categoria,
+        fotos: body.fotos
     });
 
-    await personal.save((err, personalDB) => {
+    await personaltrabajo.save((err, personaltrabajoDB) => {
 
         if (err) {
             return res.status(500).json({
@@ -141,7 +163,7 @@ app.post('/personal', verificaToken, async (req, res) => {
 
         res.status(201).json({
             ok: true,
-            personal: personalDB
+            personaltrabajo: personaltrabajoDB
         });
 
     });
@@ -151,14 +173,12 @@ app.post('/personal', verificaToken, async (req, res) => {
 // ===========================
 //  Actualizar un personal
 // ===========================
-app.put('/personal/:id', verificaToken, async (req, res) => {
-    // grabar el usuario
-    // grabar una producto del listado 
+app.put('/personaltrabajo/:id', verificaToken, async (req, res) => {
 
     let id = req.params.id;
     let body = req.body;
 
-    await Personal.findOne({_id:id}, (err, personalDB) => {
+    await PersonalTrabajo.findOne({_id:id}, (err, personaltrabajoDB) => {
 
         if (err) {
             return res.status(500).json({
@@ -167,7 +187,7 @@ app.put('/personal/:id', verificaToken, async (req, res) => {
             });
         }
 
-        if (!personalDB) {
+        if (!personaltrabajoDB) {
             return res.status(400).json({
                 ok: false,
                 err: {
@@ -176,14 +196,10 @@ app.put('/personal/:id', verificaToken, async (req, res) => {
             });
         }
 
-        personalDB.nombre = body.nombre;
-        personalDB.rfc = body.rfc;
-        personalDB.img = body.img;
-        personalDB.descripcion = body.descripcion;
-        personalDB.voteAverage = body.voteAverage;
-        /*personalDB.productos = body.productos;*/
+        personaltrabajoDB.categoria = body.categoria;
+        personaltrabajoDB.fotos = body.fotos;
 
-        personalDB.save((err, personalGuardado) => {
+        personaltrabajoDB.save((err, personaltrabajoGuardado) => {
 
             if (err) {
                 return res.status(500).json({
@@ -194,7 +210,7 @@ app.put('/personal/:id', verificaToken, async (req, res) => {
 
             res.json({
                 ok: true,
-                personal: personalGuardado
+                personal: personaltrabajoGuardado
             });
 
         });
@@ -207,11 +223,11 @@ app.put('/personal/:id', verificaToken, async (req, res) => {
 // ===========================
 //  Borrar un personal
 // ===========================
-app.delete('/personal/:id', verificaToken, async (req, res) => {
+app.delete('/personaltrabajo/:id', verificaToken, async (req, res) => {
 
     let id = req.params.id;
 
-    await Personal.findOne({_id:id}, (err, personalDB) => {
+    await PersonalTrabajo.findOne({_id:id}, (err, personaltrabajoDB) => {
 
         if (err) {
             return res.status(500).json({
@@ -220,7 +236,7 @@ app.delete('/personal/:id', verificaToken, async (req, res) => {
             });
         }
 
-        if (!personalDB) {
+        if (!personaltrabajoDB) {
             return res.status(400).json({
                 ok: false,
                 err: {
@@ -229,9 +245,9 @@ app.delete('/personal/:id', verificaToken, async (req, res) => {
             });
         }
 
-        personalDB.disponible = false;
+        personaltrabajoDB.disponible = false;
 
-        personalDB.save((err, personalBorrado) => {
+        personaltrabajoDB.save((err, personaltrabajoBorrado) => {
 
             if (err) {
                 return res.status(500).json({
@@ -242,8 +258,8 @@ app.delete('/personal/:id', verificaToken, async (req, res) => {
 
             res.json({
                 ok: true,
-                personal: personalBorrado,
-                mensaje: 'personal borrado'
+                personaltrabajo: personaltrabajoBorrado,
+                mensaje: 'personal trabajo borrado'
             });
 
         });

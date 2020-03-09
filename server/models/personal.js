@@ -8,8 +8,9 @@ let personalSchema = new Schema({
     img: { type: String, required: false },
     rfc: { type: String, required: false},
     descripcion: { type: String, required: false},
+    voteAverage: { type: Number, required: false },
     disponible: { type: Boolean, default: true },
-    productos: [ { type: Schema.Types.ObjectId, ref: 'Producto' } ],
+/* productos: [ { type: Schema.Types.ObjectId, ref: 'Producto' } ],*/    
     usuario: { type: Schema.Types.ObjectId, ref: 'Usuario' }
 });
 
