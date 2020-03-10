@@ -15,7 +15,7 @@ let movimientoSchema = new Schema({
 	fecha: { type: Date, required: true },
 	descripcion: { type: String, unique: false, required: [true, 'La descripción es obligatoria'] },
 	cantidad: { type: Number, required: true },
-	tipo: { type: String, required: true, default: 'ENTRADA', enum: statusValidos },
+	tipo: { type: String, required: true, default: 'ENTRADA', enum: tipoValidos },
 	status: { type: String, required: true, default: 'ACTIVO', enum: statusValidos },
     producto: { type: Schema.Types.ObjectId, ref: 'Producto', required: true },
     usuario: { type: Schema.Types.ObjectId, ref: 'Usuario', required: true },

@@ -125,7 +125,7 @@ app.delete('/usuario/:id', [verificaToken, verificaAdmin_Role], async function(r
                 ok: false,
                 err
             });
-        };
+        }
 
         if (!usuarioBorrado) {
             return res.status(400).json({

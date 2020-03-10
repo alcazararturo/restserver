@@ -57,14 +57,12 @@ app.get('/categoria/:id', verificaToken, async (req, res) => {
             });
         }
 
-
         res.json({
             ok: true,
             categoria: categoriaDB
         });
 
     });
-
 
 });
 
@@ -81,7 +79,6 @@ app.post('/categoria', verificaToken, async (req, res) => {
         usuario: req.usuario._id,
         img: req.body.img
     });
-
 
     await categoria.save((err, categoriaDB) => {
 
@@ -104,9 +101,7 @@ app.post('/categoria', verificaToken, async (req, res) => {
             categoria: categoriaDB
         });
 
-
     });
-
 
 });
 
@@ -195,7 +190,6 @@ app.delete('/categoria/:id', [verificaToken, verificaAdmin_Role], async (req, re
         
 
     });
-
 
 });
 

@@ -1,7 +1,5 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-// const uniqueValidator = require('mongoose-unique-validator');
-
 
 let generoValido = {
     values: ['DAMA', 'CABALLERO'],
@@ -18,6 +16,5 @@ var productoSchema = new Schema({
     categoria: { type: Schema.Types.ObjectId, ref: 'Categoria', required: true },
     usuario: { type: Schema.Types.ObjectId, ref: 'Usuario' }
 });
-
 
 module.exports = mongoose.model('Producto', productoSchema);

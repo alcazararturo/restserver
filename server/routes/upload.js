@@ -1,8 +1,8 @@
 const express = require('express');
 const fileUpload = require('express-fileupload');
 const cloudinary = require('cloudinary').v2;
-const cloudinaryStorage = require('multer-storage-cloudinary');
-const multer = require('multer');
+// const cloudinaryStorage = require('multer-storage-cloudinary');
+// const multer = require('multer');
 const app = express();
 
 const Usuario = require('../models/usuario');
@@ -46,7 +46,7 @@ app.put('/upload/:tipo/:id', function(req, res) {
             err: {
                 message: 'Los tipos permitidas son ' + tiposValidos.join(', ')
             }
-        })
+        });
     }
 
     const archivo = req.files.archivo;
@@ -93,7 +93,6 @@ app.put('/upload/:tipo/:id', function(req, res) {
 
 app.post('/upload/:tipo/:id', function(req, res) {
 
-    
     const tipo = req.params.tipo;
     const id = req.params.id;
 
@@ -137,7 +136,7 @@ app.post('/upload/:tipo/:id', function(req, res) {
 
     // Cambiar nombre al archivo
     // 183912kuasidauso-123.jpg
-    const  nombreArchivo = `${ id }-${ new Date().getMilliseconds()  }.${ extension }`;
+    // const  nombreArchivo = `${ id }-${ new Date().getMilliseconds()  }.${ extension }`;
 
     cloudinary.uploader.upload(archivo.tempFilePath, { 
         folder: tipo, use_filename: true, "width": 250, "height": 250, "crop": "fit", "effect": "saturation:-70" }, function(err, result) {
@@ -236,7 +235,7 @@ function imagenProducto(id, res, nombreArchivo) {
             });
         }
 
-        borraArchivo(productoDB.img, 'productos')
+        borraArchivo(productoDB.img, 'productos');
 
         productoDB.img = nombreArchivo;
 
@@ -307,12 +306,7 @@ function borraArchivo(nombreImagen, tipo) {
     if (fs.existsSync(pathImagen)) {
         fs.unlinkSync(pathImagen);
     }
-
-
 }
-
-
-
 
 
 module.exports = app;

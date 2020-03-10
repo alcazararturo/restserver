@@ -7,5 +7,4 @@ let categoriaSchema = new Schema({
     img: { type: String, required: false }
 });
 
-
 module.exports = mongoose.model('Categoria', categoriaSchema);

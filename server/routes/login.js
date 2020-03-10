@@ -75,7 +75,7 @@ async function verify(token) {
         email: payload.email,
         img: payload.picture,
         google: true
-    }
+    };
 
 }
 
@@ -100,7 +100,7 @@ app.post('/google', async(req, res) => {
                 ok: false,
                 err
             });
-        };
+        }
 
         if (usuarioDB) {
 
@@ -142,7 +142,7 @@ app.post('/google', async(req, res) => {
                         ok: false,
                         err
                     });
-                };
+                }
 
                 let token = jwt.sign({
                     usuario: usuarioDB
@@ -168,7 +168,7 @@ app.post('/google', async(req, res) => {
 
 });
 
-
+/*
 function obtenerMenu(ROLE) {
 
     var menu = [{
@@ -198,10 +198,8 @@ function obtenerMenu(ROLE) {
         menu[0].submenu.unshift({ titulo: 'Usuarios', url: '/usuarios' });
     }
 
-
     return menu;
 
-}
-
+} */
 
 module.exports = app;

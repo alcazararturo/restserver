@@ -168,9 +168,7 @@ app.delete('/userDevice/:id', verificaToken, (req, res) => {
 
     });
 
-
 });
-
 
 module.exports = app;
 

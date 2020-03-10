@@ -108,10 +108,7 @@ app.get('/productos/buscar/:termino', verificaToken, async (req, res) => {
 
         });
 
-
 });
-
-
 
 // ===========================
 //  Crear un nuevo producto
@@ -203,7 +200,6 @@ app.put('/productos/:id', verificaToken, async (req, res) => {
 
     });
 
-
 });
 
 // ===========================
@@ -251,7 +247,6 @@ app.delete('/productos/:id', verificaToken, async (req, res) => {
         });
 
     });
-
 
 });
 

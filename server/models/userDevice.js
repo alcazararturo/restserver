@@ -9,7 +9,7 @@ let userDeviceSchema = new Schema({
     estado : { type: Boolean, default: true },
     device : [ deviceSchema ]
 });
-//  { idDevice: String } ]
+
 userDeviceSchema.plugin(uniqueValidator, { message: '{PATH} debe de ser único' });
 
 module.exports = mongoose.model('UserDevice', userDeviceSchema);

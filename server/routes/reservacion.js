@@ -29,7 +29,7 @@ app.get('/reservacion', verificaToken, async (req, res) => {
                 reservacion
             });
 
-        })
+        });
 });
 
 // ============================
@@ -58,14 +58,12 @@ app.get('/reservacion/:id', verificaToken, async (req, res) => {
             });
         }
 
-
         res.json({
             ok: true,
             reservacion: reservacionDB
         });
 
     });
-
 
 });
 
@@ -84,7 +82,6 @@ app.post('/reservacion', verificaToken, async (req, res) => {
         producto: body.producto,
         usuario: req.usuario._id
     });
-
 
     await reservacion.save((err, reservacionDB) => {
 
@@ -107,9 +104,7 @@ app.post('/reservacion', verificaToken, async (req, res) => {
             reservacion: reservacionDB
         });
 
-
     });
-
 
 });
 
@@ -213,8 +208,6 @@ app.delete('/reservacion/:id', [verificaToken, verificaAdmin_Role], async (req, 
         
     });
 
-
 });
-
 
 module.exports = app;

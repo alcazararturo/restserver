@@ -74,9 +74,7 @@ app.get('/personal/:id', async (req, res) => {
             });
 
         });
-
 });
-
 // ===========================
 //  Buscar personal
 // ===========================
@@ -103,8 +101,7 @@ app.get('/personal/buscar/:termino', verificaToken, async (req, res) => {
                 personal
             });
 
-        });
-        
+        }); 
 });
 
 // ===========================
@@ -201,7 +198,6 @@ app.put('/personal/:id', verificaToken, async (req, res) => {
 
     });
 
-
 });
 
 // ===========================
@@ -250,8 +246,6 @@ app.delete('/personal/:id', verificaToken, async (req, res) => {
 
     });
 
-
 });
-
 
 module.exports = app;
