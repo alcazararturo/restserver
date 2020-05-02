@@ -124,6 +124,7 @@ app.post('/productos', verificaToken, async (req, res) => {
         nombre: body.nombre,
         precioUni: body.precioUni,
         descripcion: body.descripcion,
+        img: body.img,
         genero: body.genero,
         disponible: body.disponible,
         categoria: body.categoria
@@ -181,6 +182,7 @@ app.put('/productos/:id', verificaToken, async (req, res) => {
         productoDB.genero = body.genero;
         productoDB.disponible = body.disponible;
         productoDB.descripcion = body.descripcion;
+        productoDB.img = body.img;
 
         productoDB.save((err, productoGuardado) => {
 
