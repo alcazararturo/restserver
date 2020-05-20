@@ -75,7 +75,7 @@ app.post('/cartitem', verificaToken, async (req, res) => {
 
 });
 
-app.put('/personal/:id', verificaToken, async (req, res) => {
+app.put('/cartitem/:id', verificaToken, async (req, res) => {
 
     let id = req.params.id;
     let body = req.body;
@@ -126,7 +126,7 @@ app.put('/personal/:id', verificaToken, async (req, res) => {
 
 });
 
-app.delete('/personal/:id', verificaToken, async (req, res) => {
+app.delete('/cartitem/:id', verificaToken, async (req, res) => {
 
     let id = req.params.id;
 

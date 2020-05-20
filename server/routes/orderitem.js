@@ -17,6 +17,7 @@ app.get('/orderitem', verificaToken, async (req, res) => {
         .skip(desde)
         .limit(5)
         .populate('usuario', 'nombre email')
+        .populate('productos', 'title quantity price')
         .exec((err, orderitem) => {
 
             if (err) {
@@ -200,6 +201,29 @@ app.delete('/orderitem/:id', verificaToken, async (req, res) => {
 
     });
 
+});
+
+app.get('/orderitem/graph/:start', verificaToken, async (req, res, next) => {
+
+    const start = req.params.start;
+    // const end = body.end;
+
+    await OrderItem.aggregate([
+        
+        {
+            $group : {
+                _id : null,
+                totalSaleAmount: { $sum: "$amount" }
+            },
+            
+        },
+
+        ]).exec(function(error, result) {
+            if (error) return next(error);
+            res.send(result);   
+        });
+
+    
 });
 
 

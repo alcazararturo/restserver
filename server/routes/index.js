@@ -14,5 +14,10 @@ app.use(require('./personalTrabajo'));
 app.use(require('./reservacion'));
 app.use(require('./routes'));
 app.use(require('./userDevice'));
+app.use(require('./cartitem'));
+app.use(require('./orderitem'));
+app.use(require('./actividad'));
+app.use(require('./avatar'));
+app.use(require('./post'));
 
 module.exports = app;
