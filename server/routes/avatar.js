@@ -9,7 +9,7 @@ let Avatar = require('../models/avatar');
 // ============================
 // Mostrar todas las avatar
 // ============================
-app.get('/avatar', verificaToken, async(req, res) => {
+app.get('/avatar', async(req, res) => {
 
     await Avatar.find({}, 'descripcion img')
         .sort('descripcion')
@@ -33,7 +33,7 @@ app.get('/avatar', verificaToken, async(req, res) => {
 // ============================
 // Mostrar una avatar por ID
 // ============================
-app.get('/avatar/:id', verificaToken, async (req, res) => {
+app.get('/avatar/:id', async (req, res) => {
     // avatar.findById(....);
 
     let id = req.params.id;
