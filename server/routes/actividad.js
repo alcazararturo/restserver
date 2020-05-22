@@ -71,7 +71,7 @@ app.get('/actividad/email/:id', verificaToken, async (req, res) => {
     let email = req.params.id;
 
     await Actividad.find(
-        {email:email, disponible:true}, 'actividad')
+        {email:email, disponible:true}, 'actividad descripcion img creado')
         .sort('actividad')
         .exec((err, actividadDB) => {
             if (err) {
@@ -110,7 +110,9 @@ app.post('/actividad', verificaToken, async (req, res) => {
         usuario: req.usuario._id,
         creado: new Date(),
         actividad: body.actividad,
-        email: req.body.email
+        email: req.body.email,
+        descripcion: req.body.descripcion,
+        img: req.body.img
     });
 
     await actividad.save((err, actividadDB) => {
@@ -166,8 +168,10 @@ app.put('/actividad/:id', verificaToken, async (req, res) => {
             });
         }
 
-        actividadDB.actividad = body.actividad;
-        actividadDB.email     = body.email;
+        actividadDB.actividad   = body.actividad;
+        actividadDB.descripcion = body.descripcion;
+        actividadDB.img         = body.img;
+        actividadDB.email       = body.email;
 
         actividadDB.save((err, actividadGuardado) => {
 
