@@ -71,7 +71,7 @@ app.get('/actividad/email/:id', verificaToken, async (req, res) => {
     let email = req.params.id;
 
     await Actividad.find(
-        {email:email, disponible:true}, 'actividad descripcion img creado')
+        {email:email, disponible:true}, 'actividad descripcion img creado email')
         .sort('actividad')
         .exec((err, actividadDB) => {
             if (err) {
