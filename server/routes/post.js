@@ -70,7 +70,7 @@ app.get('/post/actividad/:actividad', verificaToken, async (req, res) => {
    
     let actividad = req.params.actividad;
 
-    await Posteo.findOne({actividad:actividad, disponible:true}, (err, postDB) => {
+    await Posteo.find({actividad:actividad, disponible:true}, (err, postDB) => {
 
         if (err) {
             return res.status(500).json({
