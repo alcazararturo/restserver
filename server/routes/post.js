@@ -109,7 +109,7 @@ app.post('/post', verificaToken, async (req, res) => {
         usuario: req.usuario._id,
         actividad: body.actividad,
         mensaje: body.mensaje,
-        img: [body.img],
+        img: body.img,
         coords: body.coords,
         creado: new Date(),
     });
