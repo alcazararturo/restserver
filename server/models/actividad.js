@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-let emailSchema = new Schema({ email: { type: String }});
+let correoSchema = new Schema({ correo: { type: String }});
 
 let actividadSchema = new Schema({
     creado: { type: Date },
@@ -10,7 +10,7 @@ let actividadSchema = new Schema({
     img: { type: String, required: false },
     disponible: { type: Boolean, required: true, default: true },
     finalizado: {type: Date },    
-    email: [emailSchema],
+    email: [correoSchema],
     usuario: { type: Schema.Types.ObjectId, ref: 'Usuario' }
 });
 
