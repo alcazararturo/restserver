@@ -1,9 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-const uniqueValidator = require('mongoose-unique-validator');
 
-let imgSchema = new Schema({ img: { type: String, unique:true }});
-imgSchema.plugin(uniqueValidator, { message: '{PATH} debe de ser único' });
+let imgSchema = new Schema({ img: { type: String }});
 
 let posteoSchema = new Schema({
     actividad: { type: Schema.Types.ObjectId, ref: 'Actividad' },

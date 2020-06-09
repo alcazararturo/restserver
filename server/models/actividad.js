@@ -1,9 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-const uniqueValidator = require('mongoose-unique-validator');
 
-let emailSchema = new Schema({ email: { type: String, unique:true }});
-emailSchema.plugin(uniqueValidator, { message: '{PATH} debe de ser único' });
+let emailSchema = new Schema({ email: { type: String }});
 
 let actividadSchema = new Schema({
     creado: { type: Date },

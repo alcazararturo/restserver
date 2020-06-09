@@ -110,7 +110,7 @@ app.post('/actividad', verificaToken, async (req, res) => {
         usuario: req.usuario._id,
         creado: new Date(),
         actividad: body.actividad,
-        email: req.body.email,
+        email: [req.body.email],
         descripcion: req.body.descripcion,
         img: req.body.img
     });
