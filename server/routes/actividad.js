@@ -72,6 +72,7 @@ app.get('/actividad/email/:id', verificaToken, async (req, res) => {
 
     await Actividad.find(
         {disponible:true}, 'actividad descripcion img creado email')
+        .where('email.correo').equals(email)
         .sort('actividad')
         .populate({ path: 'email', match: { correo : email } })
         .exec((err, actividadDB) => {
